@@ -19,7 +19,7 @@ exclude = [".pre-commit-config.yaml"]
 axum = ["dep:axum", "dep:tokio", "dep:axum-tracing-opentelemetry"]
 
 [dependencies]
-axum = { version = "^0.7.7", optional = true }
+axum = { version = "^0.8.3", optional = true }
 axum-tracing-opentelemetry = { version = "^0.23.0", optional = true }
 chrono = "^0.4.38"
 opentelemetry = { version = "^0.26.0" }
