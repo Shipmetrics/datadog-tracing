@@ -21,12 +21,20 @@ axum = ["dep:axum", "dep:tokio", "dep:axum-tracing-opentelemetry"]
 [dependencies]
 axum = { version = "^0.8.3", optional = true }
 axum-tracing-opentelemetry = { version = "0.25", optional = true }
-tracing-opentelemetry-instrumentation-sdk = { version = "0.16.0", features = ["http"], optional = true }
+# Must match axum-tracing-opentelemetry 0.25's transitive requirement (^0.24);
+# the previous 0.16.0 was an otel-0.23-era pin that left the export side on a
+# different opentelemetry version than the inbound extractor.
+tracing-opentelemetry-instrumentation-sdk = { version = "0.24", features = ["http"], optional = true }
 chrono = "^0.4.38"
-opentelemetry = { version = "^0.26.0" }
-opentelemetry_sdk = { version = "^0.26.0", features = ["rt-tokio"] }
-opentelemetry-http = { version = "^0.26.0" }
-opentelemetry-datadog = { version = "^0.14.0", features = ["reqwest-client"] }
+# opentelemetry stack pinned to the 0.27 line so the propagator/export side
+# (opentelemetry-datadog, tracing-opentelemetry) shares ONE opentelemetry
+# version with the axum-tracing-opentelemetry 0.25 inbound extractor. A mixed
+# 0.26/0.27 graph silently drops distributed trace context (per-version global
+# propagator + per-version OtelData span extension).
+opentelemetry = { version = "0.27" }
+opentelemetry_sdk = { version = "0.27", features = ["rt-tokio"] }
+opentelemetry-http = { version = "0.27" }
+opentelemetry-datadog = { version = "0.15", features = ["reqwest-client"] }
 reqwest = { version = "^0.12.9", default-features = false }
 serde = { version = "^1.0.215", features = ["derive"] }
 serde_json = "^1.0.132"
@@ -36,6 +44,6 @@ tokio = { version = "^1.41.1", features = [
 ], optional = true }
 tracing = "^0.1.40"
 tracing-appender = "^0.2.3"
-tracing-opentelemetry = "^0.27.0"
+tracing-opentelemetry = "0.28"
 tracing-serde = "^0.1.3"
 tracing-subscriber = { version = "^0.3.18", features = ["env-filter", "json"] }

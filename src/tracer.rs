@@ -15,6 +15,11 @@ use tracing::Subscriber;
 use tracing_opentelemetry::{OpenTelemetryLayer, PreSampledTracer};
 use tracing_subscriber::registry::LookupSpan;
 
+// opentelemetry_sdk 0.27 deprecates `trace::Config` / `with_trace_config`
+// (sampler + id-generator still only reachable this way in opentelemetry-datadog
+// 0.15). The hard removal lands in the 0.28 jump; until then this compiles and
+// is the only sampler/id-generator hook the Datadog pipeline builder exposes.
+#[allow(deprecated)]
 pub fn build_tracer() -> Result<Tracer, TraceError> {
     let service_name = env::var("DD_SERVICE")
         .map_err(|_| <&str as Into<TraceError>>::into("missing DD_SERVICE"))?;
